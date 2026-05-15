@@ -80,8 +80,10 @@ export async function signup(prevState: AuthState, formData: FormData): Promise<
 
   try {
     const { createClient } = await import("@/lib/supabase/server");
+    const { prisma } = await import("@/lib/prisma");
+
     const supabase = await createClient();
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -93,6 +95,22 @@ export async function signup(prevState: AuthState, formData: FormData): Promise<
         return { error: "An account with this email already exists. Try signing in." };
       }
       return { error: error.message };
+    }
+
+    if (data.user) {
+      const dbCompany = await prisma.company.create({
+        data: { name: company },
+      });
+      await prisma.user.create({
+        data: {
+          authId: data.user.id,
+          companyId: dbCompany.id,
+          firstName,
+          lastName,
+          email,
+          role: "ADMIN",
+        },
+      });
     }
   } catch {
     return { error: "Unable to connect. Please try again shortly." };

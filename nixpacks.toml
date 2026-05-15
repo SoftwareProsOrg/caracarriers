@@ -1,22 +1,2 @@
-# nixpacks.toml — Coolify / Nixpacks build configuration
-# Used when the Coolify service build method is set to "Nixpacks"
-# instead of Dockerfile.
-
 [phases.setup]
-nixPkgs = ["nodejs_20"]
-
-[phases.install]
-cmds = ["npm ci"]
-
-[phases.build]
-cmds = [
-  "npx prisma generate || true",
-  "npm run build",
-]
-
-[start]
-cmd = "npm start"
-
-[variables]
-NODE_ENV = "production"
-NEXT_TELEMETRY_DISABLED = "1"
+nixPkgs = ["nodejs_22"]

@@ -1,8 +1,9 @@
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+import { createServerClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const PUBLIC_PATHS = [
+  "/",
   "/login",
   "/signup",
   "/forgot-password",
@@ -17,6 +18,23 @@ const PUBLIC_PREFIXES = [
   "/apple-icon",
 ];
 
+function makeSupabase(req: NextRequest, res: NextResponse) {
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => req.cookies.getAll(),
+        setAll: (cookiesToSet) => {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            res.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
+}
+
 export async function proxy(req: NextRequest) {
   const res = NextResponse.next();
   const { pathname } = req.nextUrl;
@@ -27,10 +45,8 @@ export async function proxy(req: NextRequest) {
 
   if (!isPublic) {
     try {
-      const supabase = createMiddlewareClient({ req, res });
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const supabase = makeSupabase(req, res);
+      const { data: { session } } = await supabase.auth.getSession();
 
       if (!session) {
         const loginUrl = req.nextUrl.clone();
@@ -48,10 +64,8 @@ export async function proxy(req: NextRequest) {
   // Redirect already-authenticated users away from auth pages
   if (pathname === "/login" || pathname === "/signup") {
     try {
-      const supabase = createMiddlewareClient({ req, res });
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const supabase = makeSupabase(req, res);
+      const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         const dashboardUrl = req.nextUrl.clone();
         dashboardUrl.pathname = "/dashboard";

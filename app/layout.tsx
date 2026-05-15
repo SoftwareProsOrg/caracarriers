@@ -13,8 +13,31 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CaraCarriers | Trucking Broker Platform",
-  description: "All-in-one freight brokerage management platform",
+  title: "CaraCarriers — All-in-One Freight Broker TMS Platform",
+  description:
+    "CaraCarriers is the complete transportation management system built for freight brokers. Manage loads, carriers, shippers, dispatch, invoicing, documents, and compliance — all in one platform. Replace McLeod, DAT, and Truckstop with a single solution.",
+  keywords: [
+    "freight broker TMS", "transportation management system", "load board software",
+    "freight dispatch software", "carrier management", "trucking broker platform",
+    "freight brokerage software", "DOT compliance", "freight invoicing", "CaraCarriers",
+  ],
+  authors: [{ name: "CaraCarriers" }],
+  openGraph: {
+    title: "CaraCarriers — All-in-One Freight Broker TMS",
+    description: "The complete platform for freight brokers. Load management, carrier vetting, invoicing, e-signatures, and compliance — all in one place.",
+    type: "website",
+    siteName: "CaraCarriers",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CaraCarriers — All-in-One Freight Broker TMS",
+    description: "Replace your stack with one platform built for freight brokers.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
 };
 
 export default function RootLayout({
