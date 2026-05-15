@@ -1,0 +1,102 @@
+import { type NextRequest } from "next/server";
+import { createHmac } from "crypto";
+
+interface WebhookSigner {
+  name: string;
+  email: string;
+  signingStatus: string;
+}
+
+interface WebhookDocument {
+  id: number;
+  title: string;
+  status: string;
+  signers?: WebhookSigner[];
+}
+
+interface DocumensoWebhookPayload {
+  event: string;
+  document: WebhookDocument;
+  createdAt: string;
+}
+
+function verifySignature(
+  body: string,
+  signature: string | null,
+  secret: string
+): boolean {
+  if (!signature) return false;
+
+  const expected = createHmac("sha256", secret)
+    .update(body)
+    .digest("hex");
+
+  // Constant-time comparison to prevent timing attacks
+  if (expected.length !== signature.length) return false;
+
+  let mismatch = 0;
+  for (let i = 0; i < expected.length; i++) {
+    mismatch |= expected.charCodeAt(i) ^ signature.charCodeAt(i);
+  }
+  return mismatch === 0;
+}
+
+export async function POST(request: NextRequest): Promise<Response> {
+  const secret = process.env.DOCUMENSO_WEBHOOK_SECRET;
+
+  if (!secret) {
+    console.error("[documenso webhook] DOCUMENSO_WEBHOOK_SECRET is not set");
+    return new Response("Server misconfiguration", { status: 500 });
+  }
+
+  let body: string;
+  try {
+    body = await request.text();
+  } catch {
+    return new Response("Failed to read request body", { status: 400 });
+  }
+
+  const signature = request.headers.get("x-documenso-signature");
+
+  if (!verifySignature(body, signature, secret)) {
+    console.warn("[documenso webhook] Invalid signature — request rejected");
+    return new Response("Invalid signature", { status: 401 });
+  }
+
+  let payload: DocumensoWebhookPayload;
+  try {
+    payload = JSON.parse(body) as DocumensoWebhookPayload;
+  } catch {
+    return new Response("Invalid JSON body", { status: 400 });
+  }
+
+  const { event, document } = payload;
+  console.log(`[documenso webhook] Received event: ${event}`, {
+    documentId: document?.id,
+    documentTitle: document?.title,
+    documentStatus: document?.status,
+  });
+
+  if (event === "document.completed") {
+    console.log(
+      `[documenso webhook] Document ${document.id} completed. Signers:`,
+      document.signers?.map((s) => ({
+        name: s.name,
+        email: s.email,
+        status: s.signingStatus,
+      })) ?? []
+    );
+    // TODO: Update DB record once Prisma schema is set up
+    // e.g. await prisma.document.update({ where: { documensoId: document.id }, data: { signingStatus: 'COMPLETED' } })
+  }
+
+  if (event === "document.declined") {
+    console.log(
+      `[documenso webhook] Document ${document.id} was declined.`,
+      document.signers
+    );
+    // TODO: Update DB record once Prisma schema is set up
+  }
+
+  return new Response("OK", { status: 200 });
+}

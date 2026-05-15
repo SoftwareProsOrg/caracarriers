@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Puzzle, CheckCircle2, Link2 } from "lucide-react";
 
+const documensoConnected = !!process.env.DOCUMENSO_API_KEY;
+
 const integrations = [
   { name: "DAT Freight & Analytics", category: "Load Board", description: "Access the largest freight marketplace. Post loads and find carriers.", status: "available" },
   { name: "Truckstop.com", category: "Load Board", description: "Search available trucks and post freight across North America.", status: "available" },
@@ -15,6 +17,13 @@ const integrations = [
   { name: "Twilio", category: "Communication", description: "Send automated SMS updates to drivers and shippers.", status: "connected" },
   { name: "Relay Payments", category: "Payments", description: "Instant carrier payments and fuel card management.", status: "available" },
   { name: "FMCSA", category: "Compliance", description: "Real-time carrier safety data and authority verification.", status: "connected" },
+  {
+    name: "Documenso",
+    category: "E-Signature",
+    description:
+      "Send rate confirmations, BOLs, and carrier agreements for e-signature directly from CaraCarriers.",
+    status: documensoConnected ? "connected" : "available",
+  },
 ];
 
 const categoryColor: Record<string, string> = {
@@ -25,6 +34,7 @@ const categoryColor: Record<string, string> = {
   "Payments": "bg-primary/10 text-primary",
   "Communication": "bg-muted text-muted-foreground",
   "Compliance": "bg-success/10 text-success",
+  "E-Signature": "bg-primary/10 text-primary",
 };
 
 export default function IntegrationsPage() {
