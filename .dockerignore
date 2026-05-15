@@ -1,0 +1,43 @@
+# Version control
+.git
+.gitignore
+
+# Dependencies (installed fresh inside Docker)
+node_modules
+
+# Next.js build output
+.next
+
+# Environment files — never bake secrets into the image
+.env
+.env.*
+!.env.example
+
+# Development / editor artifacts
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Test and coverage output
+coverage
+__tests__
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Docs and readme files (not needed at runtime)
+*.md
+!DEPLOYMENT.md
+
+# Docker files (not needed inside the container)
+Dockerfile
+.dockerignore
+
+# Nixpacks config
+nixpacks.toml
