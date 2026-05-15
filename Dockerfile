@@ -30,8 +30,8 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy the rest of the source
 COPY . .
 
-# Generate Prisma client (schema must be present at build time)
-RUN npx prisma generate || true
+# Generate Prisma client — does not require DATABASE_URL at build time
+RUN npx prisma generate
 
 # Next.js collects anonymous telemetry data — disable it
 ENV NEXT_TELEMETRY_DISABLED=1
