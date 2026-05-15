@@ -9,7 +9,6 @@ import {
   Navigation,
   Truck,
   Building2,
-  FileText,
   FolderOpen,
   Shield,
   BarChart3,
@@ -21,7 +20,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
+import { logout } from "@/app/actions/auth";
 
 const navGroups = [
   {
@@ -121,18 +120,24 @@ export function Sidebar() {
         <div className="flex items-center gap-3">
           <Avatar className="h-8 w-8">
             <AvatarFallback className="bg-primary text-white text-xs font-bold">
-              MT
+              CC
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
             <p className="text-xs font-semibold text-sidebar-active-foreground truncate">
-              Michael Trevino
+              Admin User
             </p>
-            <p className="text-[11px] text-sidebar-foreground truncate">Admin</p>
+            <p className="text-[11px] text-sidebar-foreground truncate">Administrator</p>
           </div>
-          <button className="text-sidebar-foreground hover:text-sidebar-active-foreground transition-colors">
-            <LogOut className="h-4 w-4" />
-          </button>
+          <form action={logout}>
+            <button
+              type="submit"
+              className="text-sidebar-foreground hover:text-sidebar-active-foreground transition-colors"
+              title="Sign out"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </form>
         </div>
       </div>
     </aside>

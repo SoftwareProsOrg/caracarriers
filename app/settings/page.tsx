@@ -57,7 +57,7 @@ export default function SettingsPage() {
           <CardContent>
             <div className="divide-y divide-border">
               {[
-                { name: "Michael Trevino", email: "michael@caracarriers.com", role: "Admin" },
+                { name: "Admin User", email: "admin@caracarriers.com", role: "Admin" },
                 { name: "Sarah Lopez", email: "sarah@caracarriers.com", role: "Dispatcher" },
                 { name: "James Park", email: "james@caracarriers.com", role: "Agent" },
               ].map((user) => (
