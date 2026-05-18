@@ -1,9 +1,7 @@
 "use client";
 
-import { Bell, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 interface HeaderProps {
   title: string;
@@ -25,15 +23,6 @@ export function Header({ title, subtitle }: HeaderProps) {
             placeholder="Search loads, carriers, shippers..."
             className="w-72 pl-9 h-8 text-sm"
           />
-        </div>
-
-        <div className="relative">
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="h-4 w-4" />
-            <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-white">
-              3
-            </span>
-          </Button>
         </div>
       </div>
     </header>

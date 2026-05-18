@@ -103,6 +103,14 @@ enum CarrierPaymentMethod {
   OTHER
 }
 
+enum LoadEventType {
+  STATUS_CHANGE
+  CHECK_CALL
+  NOTE
+  CARRIER_ASSIGNED
+  DOCUMENT_UPLOADED
+}
+
 // ─── Models ──────────────────────────────────────────────────────────────────
 
 // The brokerage company — supports multi-tenant
@@ -298,14 +306,16 @@ model Load {
   @@map("loads")
 }
 
-// Immutable audit trail of load status changes
+// Immutable audit trail of load lifecycle events (status changes, check calls, notes, document uploads)
 model LoadEvent {
-  id         String     @id @default(cuid())
-  loadId     String     @map("load_id")
-  status     LoadStatus
+  id         String        @id @default(cuid())
+  loadId     String        @map("load_id")
+  status     LoadStatus?
+  eventType  LoadEventType @default(STATUS_CHANGE) @map("event_type")
+  userId     String?       @map("user_id")
   location   String?
   notes      String?
-  occurredAt DateTime   @default(now()) @map("occurred_at")
+  occurredAt DateTime      @default(now()) @map("occurred_at")
 
   load Load @relation(fields: [loadId], references: [id], onDelete: Cascade)
 

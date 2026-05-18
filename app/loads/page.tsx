@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Header } from "@/components/layout/header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -62,7 +63,11 @@ export default async function LoadsPage() {
                 const variant = STATUS_VARIANT[load.status] ?? "secondary";
                 const label = STATUS_LABEL[load.status] ?? load.status;
                 return (
-                  <div key={load.id} className="flex items-center gap-4 px-6 py-4 hover:bg-muted/40 transition-colors cursor-pointer">
+                  <Link
+                    key={load.id}
+                    href={`/loads/${load.id}`}
+                    className="flex items-center gap-4 px-6 py-4 hover:bg-muted/40 transition-colors"
+                  >
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-semibold text-sm">{load.loadNumber}</span>
@@ -83,7 +88,7 @@ export default async function LoadsPage() {
                       <p className="text-xs text-muted-foreground">Pickup: {load.pickupDate.toLocaleDateString()}</p>
                       <p className="text-xs text-muted-foreground">Delivery: {load.deliveryDate.toLocaleDateString()}</p>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
