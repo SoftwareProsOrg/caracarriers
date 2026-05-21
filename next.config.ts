@@ -27,6 +27,18 @@ const securityHeaders = [
   { key: "Content-Security-Policy", value: contentSecurityPolicy },
 ];
 
+const agentDiscoveryHeaders = [
+  {
+    key: "Link",
+    value: [
+      '</.well-known/api-catalog>; rel="api-catalog"',
+      '</.well-known/agent-skills/index.json>; rel="https://agentskills.io/registry"',
+      '</sitemap.xml>; rel="sitemap"; type="application/xml"',
+      '</.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json"',
+    ].join(", "),
+  },
+];
+
 const nextConfig: NextConfig = {
   output: "standalone",
   async headers() {
@@ -34,6 +46,10 @@ const nextConfig: NextConfig = {
       {
         source: "/(.*)",
         headers: securityHeaders,
+      },
+      {
+        source: "/",
+        headers: agentDiscoveryHeaders,
       },
     ];
   },

@@ -5,6 +5,7 @@ import {
   MapPin, CheckCircle2, ArrowRight, Star, ChevronDown,
   Users, Globe, BarChart3, Zap,
 } from "lucide-react";
+import { WebMCPProvider } from "@/components/webmcp-provider";
 
 export const metadata: Metadata = {
   title: "CaraCarriers — Freight Brokerage | Nationwide Trucking Solutions",
@@ -121,7 +122,7 @@ export default function LandingPage() {
         name: "CaraCarriers",
         description: "Licensed freight brokerage providing nationwide truckload, flatbed, reefer, and expedited shipping solutions.",
         url: "https://www.caracarriers.com",
-        telephone: "",
+        telephone: "+19564564558",
         address: { "@type": "PostalAddress", addressCountry: "US" },
         priceRange: "$$",
         openingHours: "Mo-Fr 08:00-18:00",
@@ -174,6 +175,7 @@ export default function LandingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
+      <WebMCPProvider />
       <div className="min-h-screen bg-background text-foreground">
         {/* ── Navigation ── */}
         <header className="fixed top-0 left-0 right-0 z-50 bg-[#0f172a]/95 backdrop-blur-sm border-b border-white/10">
@@ -191,7 +193,7 @@ export default function LandingPage() {
               <a href="#contact" className="hover:text-white transition-colors">Get a Quote</a>
             </nav>
             <div className="flex items-center gap-3">
-              <a href="tel:+1" className="hidden md:flex items-center gap-2 text-sm text-white/70 hover:text-white">
+              <a href="tel:+19564564558" className="hidden md:flex items-center gap-2 text-sm text-white/70 hover:text-white">
                 <Phone className="h-4 w-4" />
                 Call Now
               </a>
@@ -517,7 +519,7 @@ export default function LandingPage() {
               <div className="mt-8 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <Phone className="h-4 w-4 text-primary" />
-                  <span>Call dispatch: <a href="tel:+1" className="text-primary hover:underline font-medium">Available 24/7</a></span>
+                  <span>Call dispatch: <a href="tel:+19564564558" className="text-primary hover:underline font-medium">+1 (956) 456-4558</a></span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Mail className="h-4 w-4 text-primary" />
