@@ -29,6 +29,11 @@ const envSchema = z.object({
   DOCUMENSO_API_TOKEN: z.string().min(1).optional(),
   DOCUMENSO_WEBHOOK_SECRET: z.string().optional(),
 
+  LOAD_BOARD_PROVIDER: z.enum(["mock", "dat", "truckstop"]).default("mock"),
+  LOAD_BOARD_API_KEY: z.string().optional(),
+
+  OPENAI_API_KEY: z.string().optional(),
+
   AXIOM_TOKEN: z.string().optional(),
   AXIOM_DATASET: z.string().optional(),
 });

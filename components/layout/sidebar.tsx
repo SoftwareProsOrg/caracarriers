@@ -12,11 +12,18 @@ import {
   FolderOpen,
   Shield,
   BarChart3,
-  Puzzle,
   Settings,
   ChevronRight,
   LogOut,
   DollarSign,
+  BookOpen,
+  Map,
+  MessageCircle,
+  FileSpreadsheet,
+  Key,
+  TrendingUp,
+  Calculator,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -35,6 +42,15 @@ const navGroups = [
       { label: "Load Board", href: "/load-board", icon: Search },
       { label: "Active Loads", href: "/loads", icon: Package },
       { label: "Dispatch Board", href: "/dispatch", icon: Navigation },
+      { label: "Real-Time Tracking", href: "/tracking", icon: Map },
+      { label: "Communications", href: "/communications", icon: MessageCircle },
+    ],
+  },
+  {
+    label: "Sales",
+    items: [
+      { label: "CRM Pipeline", href: "/crm", icon: Users },
+      { label: "Rate Engine", href: "/rates", icon: TrendingUp },
     ],
   },
   {
@@ -48,6 +64,8 @@ const navGroups = [
     label: "Finance",
     items: [
       { label: "Invoicing", href: "/invoicing", icon: DollarSign },
+      { label: "Bookkeeping", href: "/bookkeeping", icon: BookOpen },
+      { label: "Accounting", href: "/accounting", icon: Calculator },
       { label: "Documents", href: "/documents", icon: FolderOpen },
     ],
   },
@@ -59,9 +77,16 @@ const navGroups = [
     ],
   },
   {
+    label: "Integrations",
+    items: [
+      { label: "EDI Documents", href: "/edi", icon: FileSpreadsheet },
+      { label: "API Keys", href: "/api-keys", icon: Key },
+    ],
+  },
+  {
     label: "System",
     items: [
-      { label: "Integrations", href: "/integrations", icon: Puzzle },
+      { label: "Plans & Pricing", href: "/pricing", icon: DollarSign },
       { label: "Settings", href: "/settings", icon: Settings },
     ],
   },

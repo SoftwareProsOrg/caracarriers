@@ -152,12 +152,19 @@ model Company {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  users    User[]
-  loads    Load[]
-  carriers Carrier[]
-  shippers Shipper[]
-  invoices Invoice[]
-  documents Document[]
+  users           User[]
+  loads           Load[]
+  carriers        Carrier[]
+  shippers        Shipper[]
+  invoices        Invoice[]
+  documents       Document[]
+  deals           Deal[]
+  crmActivities   CrmActivity[]
+  communications  Communication[]
+  ediDocuments    EdiDocument[]
+  apiKeys         ApiKey[]
+  portalUsers     PortalUser[]
+  laneHistories   LaneHistory[]
 
   @@map("companies")
 }
@@ -206,8 +213,9 @@ model Shipper {
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   company  Company   @relation(fields: [companyId], references: [id])
-  loads    Load[]
-  invoices Invoice[]
+  loads        Load[]
+  invoices     Invoice[]
+  portalUsers  PortalUser[]
 
   @@index([companyId])
   @@map("shippers")
@@ -316,9 +324,12 @@ model Load {
   carrier    Carrier?    @relation(fields: [carrierId], references: [id])
   dispatcher User?       @relation("AssignedDispatcher", fields: [dispatcherId], references: [id])
   createdBy  User?       @relation("CreatedBy", fields: [createdById], references: [id])
-  events     LoadEvent[]
-  documents  Document[]
-  invoice    Invoice?
+  events          LoadEvent[]
+  documents       Document[]
+  invoice         Invoice?
+  trackingEvents  TrackingEvent[]
+  communications  Communication[]
+  ediDocuments    EdiDocument[]
 
   @@index([companyId])
   @@index([shipperId])
@@ -418,4 +429,177 @@ model Document {
   @@index([carrierId])
   @@index([expiresAt])
   @@map("documents")
+}
+
+// ─── CRM ──────────────────────────────────────────────────────────────────────
+
+model Deal {
+  id                String    @id @default(cuid())
+  companyId         String    @map("company_id")
+  leadId            String?   @map("lead_id")
+  name              String
+  stage             String    @default("lead")
+  value             Decimal?  @db.Decimal(12, 2)
+  probability       Int       @default(10)
+  assignedTo        String?   @map("assigned_to")
+  notes             String?
+  expectedCloseDate DateTime? @map("expected_close_date")
+  closedAt          DateTime? @map("closed_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@index([companyId])
+  @@index([stage])
+  @@map("deals")
+}
+
+model CrmActivity {
+  id        String   @id @default(cuid())
+  companyId String   @map("company_id")
+  dealId    String?  @map("deal_id")
+  leadId    String?  @map("lead_id")
+  type      String
+  subject   String
+  body      String?
+  userId    String?  @map("user_id")
+  completed Boolean  @default(false)
+  dueAt     DateTime? @map("due_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@index([companyId])
+  @@index([dealId])
+  @@map("crm_activities")
+}
+
+// ─── Tracking ─────────────────────────────────────────────────────────────────
+
+model TrackingEvent {
+  id           String   @id @default(cuid())
+  loadId       String   @map("load_id")
+  latitude     Float
+  longitude    Float
+  speed        Float?
+  heading      Float?
+  locationName String?  @map("location_name")
+  recordedAt   DateTime @default(now()) @map("recorded_at")
+  source       String?  @default("gps")
+
+  load Load @relation(fields: [loadId], references: [id], onDelete: Cascade)
+
+  @@index([loadId])
+  @@index([recordedAt])
+  @@map("tracking_events")
+}
+
+// ─── Communications ───────────────────────────────────────────────────────────
+
+model Communication {
+  id        String   @id @default(cuid())
+  companyId String   @map("company_id")
+  loadId    String?  @map("load_id")
+  type      String
+  direction String   @default("outbound")
+  subject   String?
+  body      String?
+  fromAddr  String?  @map("from_addr")
+  toAddr    String?  @map("to_addr")
+  userId    String?  @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+  load    Load?   @relation(fields: [loadId], references: [id])
+
+  @@index([companyId])
+  @@index([loadId])
+  @@map("communications")
+}
+
+// ─── EDI ──────────────────────────────────────────────────────────────────────
+
+model EdiDocument {
+  id          String    @id @default(cuid())
+  companyId   String    @map("company_id")
+  loadId      String?   @map("load_id")
+  ediType     String    @map("edi_type")
+  direction   String    @default("inbound")
+  rawContent  String?   @map("raw_content")
+  status      String    @default("received")
+  partnerId   String?   @map("partner_id")
+  processedAt DateTime? @map("processed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+  load    Load?   @relation(fields: [loadId], references: [id])
+
+  @@index([companyId])
+  @@index([ediType])
+  @@map("edi_documents")
+}
+
+// ─── API Keys ─────────────────────────────────────────────────────────────────
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  companyId   String    @map("company_id")
+  name        String
+  key         String    @unique
+  permissions String    @default("read")
+  lastUsedAt  DateTime? @map("last_used_at")
+  expiresAt   DateTime?
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@index([companyId])
+  @@index([key])
+  @@map("api_keys")
+}
+
+// ─── Portal Users ─────────────────────────────────────────────────────────────
+
+model PortalUser {
+  id           String    @id @default(cuid())
+  companyId    String    @map("company_id")
+  shipperId    String    @map("shipper_id")
+  email        String    @unique
+  passwordHash String?   @map("password_hash")
+  name         String
+  role         String    @default("viewer")
+  isActive     Boolean   @default(true) @map("is_active")
+  lastLoginAt  DateTime? @map("last_login_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+  shipper Shipper @relation(fields: [shipperId], references: [id])
+
+  @@index([companyId])
+  @@index([shipperId])
+  @@index([email])
+  @@map("portal_users")
+}
+
+// ─── Lane Rate History ────────────────────────────────────────────────────────
+
+model LaneHistory {
+  id            String   @id @default(cuid())
+  companyId     String   @map("company_id")
+  originCity    String   @map("origin_city")
+  originState   String   @map("origin_state")
+  destCity      String   @map("dest_city")
+  destState     String   @map("dest_state")
+  equipmentType String?  @map("equipment_type")
+  rate          Decimal  @db.Decimal(10, 2)
+  ratePerMile   Decimal? @map("rate_per_mile")
+  source        String?  @default("manual")
+  recordedAt    DateTime @default(now()) @map("recorded_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@index([companyId, originCity, originState, destCity, destState])
+  @@map("lane_history")
 }

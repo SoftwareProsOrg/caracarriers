@@ -45,6 +45,9 @@ export async function login(prevState: AuthState, formData: FormData): Promise<A
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       log.warn("Login failed", { email, error: error.message });
+      if (error.message.includes("Email not confirmed") || error.message.includes("email_not_confirmed")) {
+        return { error: "Email not confirmed. Check your inbox or contact your administrator." };
+      }
       return { error: "Invalid email or password. Please try again." };
     }
     log.info("User logged in", { email });
@@ -85,7 +88,9 @@ export async function signup(prevState: AuthState, formData: FormData): Promise<
 
   try {
     const { createClient } = await import("@/lib/supabase/server");
+    const { env } = await import("@/lib/env");
     const { prisma } = await import("@/lib/prisma");
+    const { createServiceClient } = await import("@/lib/supabase/service");
 
     const supabase = await createClient();
     const { data, error } = await supabase.auth.signUp({
@@ -108,12 +113,32 @@ export async function signup(prevState: AuthState, formData: FormData): Promise<
       return { error: "Account creation failed. Please try again." };
     }
 
+    // Auto-confirm email if service role key is available
+    if (env.SUPABASE_SERVICE_ROLE_KEY) {
+      try {
+        const serviceClient = createServiceClient();
+        await serviceClient.auth.admin.updateUserById(data.user.id, {
+          email_confirm: true,
+        });
+        log.info("Email auto-confirmed", { email });
+      } catch (confirmErr) {
+        log.warn("Failed to auto-confirm email, user must check inbox", { email, error: (confirmErr as Error).message });
+      }
+    }
+
     const userId = data.user.id;
     log.info("Supabase user created, provisioning database record", { email, userId });
+
+    // Reuse existing company if same name, otherwise create new one
     await prisma.$transaction(async (tx) => {
-      const dbCompany = await tx.company.create({
-        data: { name: company },
+      let dbCompany = await tx.company.findFirst({
+        where: { name: company },
       });
+      if (!dbCompany) {
+        dbCompany = await tx.company.create({
+          data: { name: company },
+        });
+      }
       await tx.user.create({
         data: {
           authId: userId,
