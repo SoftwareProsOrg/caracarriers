@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
+import { env } from "@/lib/env";
 
-export function GET() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+export async function GET() {
+  const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL;
   const authBase = `${supabaseUrl}/auth/v1`;
 
   const metadata = {

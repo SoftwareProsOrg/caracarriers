@@ -4,7 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Puzzle, CheckCircle2, Link2 } from "lucide-react";
 
-const documensoConnected = !!process.env.DOCUMENSO_API_KEY;
+import { env } from "@/lib/env";
+
+const documensoConnected = !!env.DOCUMENSO_API_TOKEN;
 
 const integrations = [
   { name: "DAT Freight & Analytics", category: "Load Board", description: "Access the largest freight marketplace. Post loads and find carriers.", status: "available" },

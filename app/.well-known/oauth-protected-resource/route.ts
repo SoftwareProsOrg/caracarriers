@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
+import { env } from "@/lib/env";
 
 export function GET() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+  const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL;
 
   const metadata = {
     resource: "https://www.caracarriers.com",

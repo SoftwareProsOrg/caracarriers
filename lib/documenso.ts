@@ -1,5 +1,4 @@
-// Documenso API client
-// Docs: https://docs.documenso.com/developers/public-api
+import { env } from "@/lib/env";
 
 export type DocumentStatus =
   | "DRAFT"
@@ -39,12 +38,11 @@ export interface ListDocumentsResponse {
 }
 
 function getConfig(): { apiKey: string; apiUrl: string } {
-  const apiKey = process.env.DOCUMENSO_API_KEY;
-  const apiUrl =
-    process.env.DOCUMENSO_API_URL ?? "https://app.documenso.com/api/v1";
+  const apiKey = env.DOCUMENSO_API_TOKEN;
+  const apiUrl = env.DOCUMENSO_API_URL;
 
   if (!apiKey) {
-    throw new Error("DOCUMENSO_API_KEY environment variable is not set");
+    throw new Error("DOCUMENSO_API_TOKEN environment variable is not set");
   }
 
   return { apiKey, apiUrl };

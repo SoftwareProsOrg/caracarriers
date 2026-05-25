@@ -1,8 +1,9 @@
 import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
 import { buildRateConPdf } from "@/lib/pdf/rate-confirmation";
+import { env } from "@/lib/env";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(env.RESEND_API_KEY);
 
 export async function sendRateConfirmationEmail(loadId: string): Promise<boolean> {
   const load = await prisma.load.findUnique({
@@ -39,7 +40,7 @@ export async function sendRateConfirmationEmail(loadId: string): Promise<boolean
       company: load.company,
     });
 
-    const from = process.env.RESEND_FROM ?? "onboarding@resend.dev";
+    const from = env.RESEND_FROM;
 
     await resend.emails.send({
       from,

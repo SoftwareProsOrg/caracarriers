@@ -1,5 +1,6 @@
 import { type NextRequest } from "next/server";
 import { createHmac } from "crypto";
+import { env } from "@/lib/env";
 
 interface WebhookSigner {
   name: string;
@@ -42,7 +43,7 @@ function verifySignature(
 }
 
 export async function POST(request: NextRequest): Promise<Response> {
-  const secret = process.env.DOCUMENSO_WEBHOOK_SECRET;
+  const secret = env.DOCUMENSO_WEBHOOK_SECRET;
 
   if (!secret) {
     console.error("[documenso webhook] DOCUMENSO_WEBHOOK_SECRET is not set");
