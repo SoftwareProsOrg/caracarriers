@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { log } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/layout/header";
 import { AlertCircle, RefreshCcw } from "lucide-react";
@@ -13,8 +14,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Optionally log the error to an error reporting service
-    console.error(error);
+    log.error("Unhandled error", error);
   }, [error]);
 
   return (
@@ -28,7 +28,7 @@ export default function GlobalError({
           Application Error
         </h2>
         <p className="mb-8 max-w-md text-muted-foreground">
-          We encountered a problem while processing your request. This has been logged and we're looking into it.
+          We encountered a problem while processing your request. This has been logged and we&apos;re looking into it.
         </p>
         <div className="flex gap-4">
           <Button variant="default" onClick={() => reset()}>

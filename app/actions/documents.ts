@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getAuthContext } from "@/lib/auth";
+import { log } from "@/lib/logger";
 import { DocumentType, DocumentStatus } from "@prisma/client";
 
 export async function uploadDocument(
@@ -37,7 +38,7 @@ export async function uploadDocument(
       },
     });
   } catch (err) {
-    console.error("Failed to upload document:", err);
+    log.error("Failed to upload document", err as Error);
     return { error: "Failed to save document record." };
   }
 

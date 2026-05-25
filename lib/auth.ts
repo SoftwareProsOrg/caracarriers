@@ -20,8 +20,9 @@ export async function getAuthContext(): Promise<AuthContext | null> {
     });
 
     if (!dbUser) return null;
+    if (!dbUser.authId) return null;
 
-    return { userId: dbUser.id, companyId: dbUser.companyId, authId: dbUser.authId! };
+    return { userId: dbUser.id, companyId: dbUser.companyId, authId: dbUser.authId };
   } catch {
     return null;
   }

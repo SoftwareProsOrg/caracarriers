@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { useForm, useWatch } from "react-hook-form";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { z } from "zod";
 import {
   Dialog,
   DialogTrigger,
@@ -52,15 +52,8 @@ export function SendSignatureDialog({
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-    watch,
-  } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+  const form = useForm<FormValues>({
+    resolver: standardSchemaResolver(schema),
     defaultValues: {
       signerName: "",
       signerEmail: "",
@@ -68,7 +61,16 @@ export function SendSignatureDialog({
     },
   });
 
-  const selectedRole = watch("signerRole");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+    control,
+  } = form;
+
+  const selectedRole = useWatch({ control, name: "signerRole" });
 
   async function onSubmit(values: FormValues) {
     setSubmitting(true);

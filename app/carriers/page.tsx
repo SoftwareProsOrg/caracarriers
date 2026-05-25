@@ -30,6 +30,7 @@ export default async function CarriersPage() {
           _count: { select: { loads: true } },
           equipment: true,
         },
+        take: 100,
       })
     : [];
 

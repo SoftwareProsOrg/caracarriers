@@ -3,9 +3,14 @@ import { prisma } from "@/lib/prisma";
 import { buildRateConPdf } from "@/lib/pdf/rate-confirmation";
 import { env } from "@/lib/env";
 
-const resend = new Resend(env.RESEND_API_KEY);
+function createResend() {
+  if (!env.RESEND_API_KEY) return null;
+  return new Resend(env.RESEND_API_KEY);
+}
 
 export async function sendRateConfirmationEmail(loadId: string): Promise<boolean> {
+  const resend = createResend();
+  if (!resend) return false;
   const load = await prisma.load.findUnique({
     where: { id: loadId },
     include: { carrier: true, company: true },

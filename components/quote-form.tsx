@@ -18,9 +18,9 @@ export function QuoteForm() {
       company: (form.elements.namedItem("company") as HTMLInputElement)?.value || "",
       origin: (form.elements.namedItem("origin") as HTMLInputElement)?.value || "",
       destination: (form.elements.namedItem("destination") as HTMLInputElement)?.value || "",
-      equipment: (form.elements.namedItem("equipment") as HTMLSelectElement)?.value || "",
+      equipmentType: (form.elements.namedItem("equipment") as HTMLSelectElement)?.value || "",
       weight: (form.elements.namedItem("weight") as HTMLInputElement)?.value || "",
-      pickup: (form.elements.namedItem("pickup") as HTMLInputElement)?.value || "",
+      pickupDate: (form.elements.namedItem("pickup") as HTMLInputElement)?.value || "",
       notes: (form.elements.namedItem("notes") as HTMLTextAreaElement)?.value || "",
     };
 

@@ -18,6 +18,7 @@ export default async function ShippersPage() {
           _count: { select: { loads: true } },
           invoices: { select: { amount: true, status: true } },
         },
+        take: 100,
       })
     : [];
 

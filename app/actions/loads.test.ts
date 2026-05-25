@@ -33,7 +33,7 @@ vi.mock("@/lib/prisma", () => ({
       create: vi.fn(),
     },
     invoice: {
-      count: vi.fn(),
+      findFirst: vi.fn(),
       create: vi.fn(),
     },
   },
@@ -77,7 +77,7 @@ describe("app/actions/loads", () => {
         companyId: "comp-1",
         invoice: null,
       });
-      (prisma.invoice.count as any).mockResolvedValue(10);
+      (prisma.invoice.findFirst as any).mockResolvedValue({ invoiceNumber: "INV-0010" });
       (prisma.invoice.create as any).mockResolvedValue({ id: "inv-1" });
 
       const result = await advanceStatus("load-1", LoadStatus.DELIVERED);

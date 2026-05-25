@@ -57,6 +57,7 @@ export default async function DocumentsPage() {
           load: { select: { loadNumber: true } },
           carrier: { select: { name: true } },
         },
+        take: 100,
       })
     : [];
 

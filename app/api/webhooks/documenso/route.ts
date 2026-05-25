@@ -1,6 +1,7 @@
 import { type NextRequest } from "next/server";
 import { createHmac } from "crypto";
 import { env } from "@/lib/env";
+import { log } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
 
 interface WebhookSigner {
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest): Promise<Response> {
   const secret = env.DOCUMENSO_WEBHOOK_SECRET;
 
   if (!secret) {
-    console.error("[documenso webhook] DOCUMENSO_WEBHOOK_SECRET is not set");
+    log.error("[documenso webhook] DOCUMENSO_WEBHOOK_SECRET is not set");
     return new Response("Server misconfiguration", { status: 500 });
   }
 
@@ -61,7 +62,7 @@ export async function POST(request: NextRequest): Promise<Response> {
   const signature = request.headers.get("x-documenso-signature");
 
   if (!verifySignature(body, signature, secret)) {
-    console.warn("[documenso webhook] Invalid signature — request rejected");
+    log.warn("[documenso webhook] Invalid signature — request rejected");
     return new Response("Invalid signature", { status: 401 });
   }
 
@@ -73,45 +74,45 @@ export async function POST(request: NextRequest): Promise<Response> {
   }
 
   const { event, document } = payload;
-  console.log(`[documenso webhook] Received event: ${event}`, {
+  log.info(`[documenso webhook] Received event: ${event}`, {
     documentId: document?.id,
     documentTitle: document?.title,
     documentStatus: document?.status,
   });
 
   if (event === "document.completed") {
-    console.log(
+    log.info(
       `[documenso webhook] Document ${document.id} completed. Signers:`,
-      document.signers?.map((s) => ({
+      { signers: document.signers?.map((s) => ({
         name: s.name,
         email: s.email,
         status: s.signingStatus,
-      })) ?? []
+      })) ?? [] }
     );
     try {
       await prisma.document.updateMany({
         where: { documensoId: document.id },
         data: { signingStatus: "SIGNED" },
       });
-      console.log(`[documenso webhook] DB updated: document ${document.id} signingStatus → SIGNED`);
+      log.info(`[documenso webhook] DB updated: document ${document.id} signingStatus → SIGNED`);
     } catch (err) {
-      console.error(`[documenso webhook] Failed to update DB for document ${document.id}:`, err);
+      log.error(`[documenso webhook] Failed to update DB for document ${document.id}:`, err as Error);
     }
   }
 
   if (event === "document.declined") {
-    console.log(
+    log.info(
       `[documenso webhook] Document ${document.id} was declined.`,
-      document.signers
+      { signers: document.signers }
     );
     try {
       await prisma.document.updateMany({
         where: { documensoId: document.id },
         data: { signingStatus: "DECLINED" },
       });
-      console.log(`[documenso webhook] DB updated: document ${document.id} signingStatus → DECLINED`);
+      log.info(`[documenso webhook] DB updated: document ${document.id} signingStatus → DECLINED`);
     } catch (err) {
-      console.error(`[documenso webhook] Failed to update DB for document ${document.id}:`, err);
+      log.error(`[documenso webhook] Failed to update DB for document ${document.id}:`, err as Error);
     }
   }
 

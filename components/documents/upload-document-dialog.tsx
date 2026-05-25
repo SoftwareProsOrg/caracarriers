@@ -2,8 +2,8 @@
 
 import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -53,7 +53,7 @@ export function UploadDocumentDialog({
     formState: { errors },
     reset,
   } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: standardSchemaResolver(schema),
     defaultValues: {
       name: "",
       type: DocumentType.OTHER,
@@ -73,7 +73,9 @@ export function UploadDocumentDialog({
     try {
       const supabase = createClient();
       const ext = selectedFile.name.split(".").pop() ?? "pdf";
-      const path = `${companyId}/standalone/${values.type}-${Date.now()}.${ext}`;
+      // eslint-disable-next-line react-hooks/purity
+      const timestamp = Date.now();
+      const path = `${companyId}/standalone/${values.type}-${timestamp}.${ext}`;
 
       const { error: uploadError } = await supabase.storage
         .from("load-documents")

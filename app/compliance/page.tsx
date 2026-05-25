@@ -40,6 +40,7 @@ export default async function CompliancePage() {
     ? await prisma.carrier.findMany({
         where: { companyId: auth.companyId },
         orderBy: { name: "asc" },
+        take: 100,
       })
     : [];
 

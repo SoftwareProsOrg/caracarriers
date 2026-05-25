@@ -103,14 +103,20 @@ export async function signup(prevState: AuthState, formData: FormData): Promise<
       return { error: error.message };
     }
 
-    if (data.user) {
-      log.info("Supabase user created, provisioning database record", { email, userId: data.user.id });
-      const dbCompany = await prisma.company.create({
+    if (!data?.user) {
+      log.warn("Supabase signup returned no user", { email });
+      return { error: "Account creation failed. Please try again." };
+    }
+
+    const userId = data.user.id;
+    log.info("Supabase user created, provisioning database record", { email, userId });
+    await prisma.$transaction(async (tx) => {
+      const dbCompany = await tx.company.create({
         data: { name: company },
       });
-      await prisma.user.create({
+      await tx.user.create({
         data: {
-          authId: data.user.id,
+          authId: userId,
           companyId: dbCompany.id,
           firstName,
           lastName,
@@ -118,8 +124,8 @@ export async function signup(prevState: AuthState, formData: FormData): Promise<
           role: "ADMIN",
         },
       });
-      log.info("Signup complete", { email, company });
-    }
+    });
+    log.info("Signup complete", { email, company });
   } catch (err) {
     log.error("Signup processing error", err as Error);
     return { error: "Unable to connect. Please try again shortly." };

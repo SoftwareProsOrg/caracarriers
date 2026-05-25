@@ -20,6 +20,7 @@ export default async function DispatchPage() {
         include: {
           carrier: { select: { name: true, phone: true } },
         },
+        take: 100,
       })
     : [];
 

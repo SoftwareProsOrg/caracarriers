@@ -5,6 +5,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { Header } from "@/components/layout/header";
 import { formatCurrency } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
@@ -154,13 +155,13 @@ export default async function DashboardPage() {
                 <CardDescription>Latest activity across your board</CardDescription>
               </div>
               <Button variant="outline" size="sm" asChild>
-                <a href="/loads">View All</a>
+                <Link href="/loads">View All</Link>
               </Button>
             </CardHeader>
             <CardContent className="p-0">
               {recentLoads.length === 0 ? (
                 <div className="px-6 py-8 text-center text-sm text-muted-foreground">
-                  No loads yet. <a href="/loads" className="text-primary hover:underline">Create your first load.</a>
+                  No loads yet. <Link href="/loads" className="text-primary hover:underline">Create your first load.</Link>
                 </div>
               ) : (
                 <div className="divide-y divide-border">

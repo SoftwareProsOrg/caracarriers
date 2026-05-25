@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getAuthContext } from "@/lib/auth";
+import { log } from "@/lib/logger";
 import {
   LoadStatus, CarrierStatus, InsuranceStatus, AuthorityStatus,
   EquipmentType, InvoiceStatus, DocumentType, DocumentStatus,
@@ -333,7 +334,7 @@ export async function seedDemoData(): Promise<{ error?: string; success?: boolea
       },
     });
   } catch (err) {
-    console.error("Seed error:", err);
+    log.error("Seed error", err as Error);
     return { error: "Failed to seed demo data. Some records may already exist." };
   }
 
@@ -362,7 +363,7 @@ export async function clearDemoData(): Promise<{ error?: string; success?: boole
     await prisma.carrier.deleteMany({ where: { id: { in: demoIds }, companyId } });
     await prisma.shipper.deleteMany({ where: { id: { in: demoIds }, companyId } });
   } catch (err) {
-    console.error("Clear demo error:", err);
+    log.error("Clear demo error", err as Error);
     return { error: "Failed to clear demo data." };
   }
 

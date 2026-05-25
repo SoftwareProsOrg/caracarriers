@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getAuthContext } from "@/lib/auth";
+import { log } from "@/lib/logger";
 
 const updateCompanySchema = z.object({
   name: z.string().min(1, "Company name is required"),
@@ -52,7 +53,7 @@ export async function updateCompany(prevState: UpdateCompanyState, formData: For
       },
     });
   } catch (err) {
-    console.error("Update company error:", err);
+    log.error("Update company error", err as Error);
     return { error: "Failed to update company profile." };
   }
 

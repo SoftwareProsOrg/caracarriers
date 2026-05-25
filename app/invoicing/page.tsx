@@ -28,6 +28,7 @@ export default async function InvoicingPage() {
           shipper: { select: { name: true } },
           load: { select: { loadNumber: true } },
         },
+        take: 100,
       })
     : [];
 

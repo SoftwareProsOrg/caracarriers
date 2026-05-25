@@ -1,6 +1,7 @@
 "use server";
 
 import { sendDocument, type SignerRole } from "@/lib/documenso";
+import { log } from "@/lib/logger";
 
 export interface SendForSignatureInput {
   documentId: number;
@@ -28,7 +29,7 @@ export async function sendForSignature(
   } catch (err) {
     const message =
       err instanceof Error ? err.message : "An unexpected error occurred";
-    console.error("[sendForSignature] error:", message);
+    log.error("[sendForSignature] error", { message });
     return { success: false, error: message };
   }
 }

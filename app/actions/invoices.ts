@@ -21,8 +21,13 @@ export type InvoiceActionState = {
 } | null;
 
 async function nextInvoiceNumber(companyId: string): Promise<string> {
-  const count = await prisma.invoice.count({ where: { companyId } });
-  return `INV-${String(count + 1).padStart(4, "0")}`;
+  const max = await prisma.invoice.findFirst({
+    where: { companyId },
+    orderBy: { invoiceNumber: "desc" },
+    select: { invoiceNumber: true },
+  });
+  const next = max ? parseInt(max.invoiceNumber.replace("INV-", ""), 10) + 1 : 1;
+  return `INV-${String(next).padStart(4, "0")}`;
 }
 
 export async function createInvoice(prevState: InvoiceActionState, formData: FormData): Promise<InvoiceActionState> {

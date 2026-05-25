@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState, startTransition } from "react";
 import { createCarrier } from "@/app/actions/carriers";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger,
@@ -16,7 +16,7 @@ export function CreateCarrierDialog() {
   const [state, action, pending] = useActionState(createCarrier, null);
 
   useEffect(() => {
-    if (state?.success) setOpen(false);
+    if (state?.success) startTransition(() => setOpen(false));
   }, [state]);
 
   return (

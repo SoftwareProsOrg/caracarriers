@@ -21,11 +21,11 @@ vi.mock("@/lib/logger", () => ({
   },
 }));
 
-vi.mock("@/lib/prisma", () => ({
+  vi.mock("@/lib/prisma", () => ({
   prisma: {
     invoice: {
       create: vi.fn(),
-      count: vi.fn(),
+      findFirst: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
     },
@@ -48,7 +48,7 @@ describe("app/actions/invoices", () => {
   describe("createInvoice", () => {
     it("creates an invoice with valid data", async () => {
       (getAuthContext as any).mockResolvedValue({ userId: "user-1", companyId: "comp-1" });
-      (prisma.invoice.count as any).mockResolvedValue(5);
+      (prisma.invoice.findFirst as any).mockResolvedValue({ invoiceNumber: "INV-0005" });
 
       const formData = new FormData();
       formData.append("shipperId", "shipper-1");

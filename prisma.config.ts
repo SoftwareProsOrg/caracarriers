@@ -3,9 +3,11 @@
 // connect to the database). It is required at runtime for migrate and db push.
 
 // For now, we'll just export an object since defineConfig doesn't exist
-export default {
+const config = {
   schema: "prisma/schema.prisma",
   datasource: {
     url: process.env.DATABASE_URL,
   },
 };
+
+export default config;

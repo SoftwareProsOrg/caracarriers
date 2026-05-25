@@ -37,6 +37,7 @@ export default async function LoadsPage() {
         where: { companyId: auth.companyId },
         orderBy: { createdAt: "desc" },
         include: { carrier: { select: { name: true } } },
+        take: 100,
       })
     : [];
 

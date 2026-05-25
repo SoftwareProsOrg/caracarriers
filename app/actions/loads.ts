@@ -32,8 +32,13 @@ export type LoadActionState = {
 } | null;
 
 async function nextLoadNumber(companyId: string): Promise<string> {
-  const count = await prisma.load.count({ where: { companyId } });
-  return `LD-${String(count + 1).padStart(4, "0")}`;
+  const max = await prisma.load.findFirst({
+    where: { companyId },
+    orderBy: { loadNumber: "desc" },
+    select: { loadNumber: true },
+  });
+  const next = max ? parseInt(max.loadNumber.replace("LD-", ""), 10) + 1 : 1;
+  return `LD-${String(next).padStart(4, "0")}`;
 }
 
 export async function createLoad(prevState: LoadActionState, formData: FormData): Promise<LoadActionState> {
@@ -252,8 +257,13 @@ export async function advanceStatus(
         select: { shipperId: true, shipperRate: true, companyId: true, invoice: { select: { id: true } } },
       });
       if (load?.shipperId && !load.invoice) {
-        const count = await prisma.invoice.count({ where: { companyId: auth.companyId } });
-        const invoiceNumber = `INV-${String(count + 1).padStart(4, "0")}`;
+        const max = await prisma.invoice.findFirst({
+          where: { companyId: auth.companyId },
+          orderBy: { invoiceNumber: "desc" },
+          select: { invoiceNumber: true },
+        });
+        const next = max ? parseInt(max.invoiceNumber.replace("INV-", ""), 10) + 1 : 1;
+        const invoiceNumber = `INV-${String(next).padStart(4, "0")}`;
         const dueAt = new Date();
         dueAt.setDate(dueAt.getDate() + 30);
         const invoice = await prisma.invoice.create({
