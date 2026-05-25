@@ -380,12 +380,10 @@ export default function LandingPage() {
             </div>
 
             <div className="rounded-2xl border border-border bg-card p-8">
-              <form
-                action="mailto:dispatch@caracarriers.com"
-                method="post"
-                encType="text/plain"
-                className="space-y-5"
-              >
+             <form
+                 id="quote-form"
+                 className="space-y-5"
+               >
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium block mb-1.5" htmlFor="name">Your Name *</label>
@@ -507,13 +505,14 @@ export default function LandingPage() {
                   />
                 </div>
 
-                <button
-                  type="submit"
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-base font-semibold text-white hover:bg-primary/90 transition-colors"
-                >
-                  Submit Quote Request
-                  <ArrowRight className="h-5 w-5" />
-                </button>
+             <button
+                   type="submit"
+                   className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-base font-semibold text-white hover:bg-primary/90 transition-colors"
+                   id="submit-button"
+                 >
+                   Submit Quote Request
+                   <ArrowRight className="h-5 w-5" />
+                 </button>
               </form>
 
               <div className="mt-8 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-muted-foreground">
@@ -567,58 +566,118 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── CTA ── */}
-        <section className="py-20 bg-primary">
-          <div className="mx-auto max-w-4xl px-6 text-center">
-            <h2 className="text-4xl font-bold text-white mb-4">Ready to Ship?</h2>
-            <p className="text-white/80 text-xl mb-8 max-w-xl mx-auto">
-              Get competitive freight rates in minutes. No commitment required.
-            </p>
-            <a
-              href="#contact"
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-10 py-4 text-lg font-semibold text-primary hover:bg-white/90 transition-all hover:scale-105 shadow-xl"
-            >
-              Get a Free Quote
-              <ArrowRight className="h-5 w-5" />
-            </a>
-          </div>
-        </section>
+         {/* ── CTA ── */}
+         <section className="py-20 bg-primary">
+           <div className="mx-auto max-w-4xl px-6 text-center">
+             <h2 className="text-4xl font-bold text-white mb-4">Ready to Ship?</h2>
+             <p className="text-white/80 text-xl mb-8 max-w-xl mx-auto">
+               Get competitive freight rates in minutes. No commitment required.
+             </p>
+             <a
+               href="#contact"
+               className="inline-flex items-center gap-2 rounded-xl bg-white px-10 py-4 text-lg font-semibold text-primary hover:bg-white/90 transition-all hover:scale-105 shadow-xl"
+             >
+               Get a Free Quote
+               <ArrowRight className="h-5 w-5" />
+             </a>
+           </div>
+         </section>
 
-        {/* ── Footer ── */}
-        <footer className="bg-[#0a0f1e] border-t border-white/10 py-12">
-          <div className="mx-auto max-w-7xl px-6">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                  <Truck className="h-4 w-4 text-white" />
-                </div>
-                <span className="font-bold text-white">CaraCarriers</span>
-              </div>
-              <div className="text-center">
-                <p className="text-white/40 text-sm">
-                  © {new Date().getFullYear()} CaraCarriers · Licensed Freight Broker · FMCSA Authorized
-                </p>
-                <p className="text-white/20 text-xs mt-1">
-                  Website by{" "}
-                  <a
-                    href="https://www.softwarepros.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white/30 hover:text-white/50 transition-colors underline"
-                  >
-                    SoftwarePros Org
-                  </a>
-                  {" "}· 200 E Van Buren Ave, Harlingen, TX 78550
-                </p>
-              </div>
-              <div className="flex items-center gap-6 text-sm text-white/50">
-                <a href="#contact" className="hover:text-white transition-colors">Get a Quote</a>
-                <Link href="/login" className="hover:text-white transition-colors">Broker Login</Link>
-              </div>
-            </div>
-          </div>
-        </footer>
-      </div>
-    </>
-  );
+         {/* ── Footer ── */}
+         <footer className="bg-[#0a0f1e] border-t border-white/10 py-12">
+           <div className="mx-auto max-w-7xl px-6">
+             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+               <div className="flex items-center gap-2">
+                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+                   <Truck className="h-4 w-4 text-white" />
+                 </div>
+                 <span className="font-bold text-white">CaraCarriers</span>
+               </div>
+               <div className="text-center">
+                 <p className="text-white/40 text-sm">
+                   © {new Date().getFullYear()} CaraCarriers · Licensed Freight Broker · FMCSA Authorized
+                 </p>
+                 <p className="text-white/20 text-xs mt-1">
+                   Website by{" "}
+                   <a
+                     href="https://www.softwarepros.org"
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     className="text-white/30 hover:text-white/50 transition-colors underline"
+                   >
+                     SoftwarePros Org
+                   </a>
+                   {" "}· 200 E Van Buren Ave, Harlingen, TX 78550
+                 </p>
+               </div>
+               <div className="flex items-center gap-6 text-sm text-white/50">
+                 <a href="#contact" className="hover:text-white transition-colors">Get a Quote</a>
+                 <Link href="/login" className="hover:text-white transition-colors">Broker Login</Link>
+               </div>
+             </div>
+           </div>
+         </footer>
+       </div>
+       
+       {/* Form submission script */}
+       <script>
+         document.addEventListener('DOMContentLoaded', function() {
+           const form = document.getElementById('quote-form');
+           const submitButton = document.getElementById('submit-button');
+           
+           if (form && submitButton) {
+             form.addEventListener('submit', function(e) {
+               e.preventDefault();
+               
+               // Disable button and show loading state
+               submitButton.disabled = true;
+               submitButton.innerHTML = 'Sending... <ArrowRight className="h-5 w-5" />';
+               
+               // Collect form data
+               const formData = {
+                 name: document.getElementById('name')?.value || '',
+                 email: document.getElementById('email')?.value || '',
+                 phone: document.getElementById('phone')?.value || '',
+                 company: document.getElementById('company')?.value || '',
+                 origin: document.getElementById('origin')?.value || '',
+                 destination: document.getElementById('destination')?.value || '',
+                 equipment: document.getElementById('equipment')?.value || '',
+                 weight: document.getElementById('weight')?.value || '',
+                 pickup: document.getElementById('pickup')?.value || '',
+                 notes: document.getElementById('notes')?.value || ''
+               };
+               
+               // Send to API endpoint
+               fetch('/api/leads', {
+                 method: 'POST',
+                 headers: {
+                   'Content-Type': 'application/json',
+                 },
+                 body: JSON.stringify(formData)
+               })
+               .then(response => response.json())
+               .then(data => {
+                 if (data.success) {
+                   // Show success message
+                   alert('Thank you for your quote request! We will get back to you shortly.');
+                   form.reset();
+                 } else {
+                   throw new Error(data.error || 'Failed to submit');
+                 }
+               })
+               .catch(error => {
+                 console.error('Error:', error);
+                 alert('There was an error submitting your request. Please try again or call us directly.');
+               })
+               .finally(() => {
+                 // Re-enable button
+                 submitButton.disabled = false;
+                 submitButton.innerHTML = 'Submit Quote Request <ArrowRight className="h-5 w-5" />';
+               });
+             });
+           }
+         });
+       </script>
+     </>
+   );
 }

@@ -38,6 +38,14 @@ function makeSupabase(req: NextRequest, res: NextResponse) {
 export async function proxy(req: NextRequest) {
   const res = NextResponse.next();
   const { pathname } = req.nextUrl;
+  const accept = req.headers.get("accept") ?? "";
+
+  // Handle markdown rewrites for root (from middleware.ts)
+  if (accept.includes("text/markdown") && pathname === "/") {
+    const url = req.nextUrl.clone();
+    url.pathname = "/api/markdown";
+    return NextResponse.rewrite(url);
+  }
 
   const isPublic =
     PUBLIC_PATHS.includes(pathname) ||

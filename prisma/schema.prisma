@@ -113,6 +113,29 @@ enum LoadEventType {
 
 // ─── Models ──────────────────────────────────────────────────────────────────
 
+// Lead model for capturing potential customers
+model Lead {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  company   String?
+  origin    String?
+  destination String?
+  equipmentType String?
+  weight    String?
+  pickupDate String?
+  notes     String?
+  source    String? @default("website") // e.g., website, facebook, google
+  status    String  @default("new") // new, contacted, qualified, etc.
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([email])
+  @@index([status])
+  @@map("leads")
+}
+
 // The brokerage company — supports multi-tenant
 model Company {
   id        String   @id @default(cuid())
