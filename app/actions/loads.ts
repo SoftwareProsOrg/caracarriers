@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getAuthContext } from "@/lib/auth";
+import { log } from "@/lib/logger";
 import { EquipmentType, LoadStatus, LoadEventType, DocumentType, DocumentStatus } from "@prisma/client";
 
 const createLoadSchema = z.object({
@@ -48,7 +49,7 @@ export async function createLoad(prevState: LoadActionState, formData: FormData)
   const d = result.data;
   try {
     const loadNumber = await nextLoadNumber(auth.companyId);
-    await prisma.load.create({
+    const load = await prisma.load.create({
       data: {
         companyId: auth.companyId,
         loadNumber,
@@ -71,7 +72,9 @@ export async function createLoad(prevState: LoadActionState, formData: FormData)
         notes: d.notes || null,
       },
     });
-  } catch {
+    log.info("Load created", { loadId: load.id, loadNumber, companyId: auth.companyId });
+  } catch (err) {
+    log.error("Failed to create load", err as Error);
     return { error: "Failed to create load. Please try again." };
   }
 
@@ -93,7 +96,9 @@ export async function updateLoadStatus(loadId: string, status: LoadStatus): Prom
     await prisma.loadEvent.create({
       data: { loadId, status },
     });
-  } catch {
+    log.info("Load status updated (simple)", { loadId, status, userId: auth.userId });
+  } catch (err) {
+    log.error("Failed to update status", err as Error);
     return { error: "Failed to update status." };
   }
 
@@ -111,7 +116,9 @@ export async function deleteLoad(loadId: string): Promise<{ error?: string }> {
     await prisma.load.delete({
       where: { id: loadId, companyId: auth.companyId },
     });
-  } catch {
+    log.info("Load deleted", { loadId, userId: auth.userId });
+  } catch (err) {
+    log.error("Failed to delete load", err as Error);
     return { error: "Failed to delete load." };
   }
 
@@ -190,7 +197,9 @@ export async function updateLoad(
         notes: d.notes || null,
       },
     });
-  } catch {
+    log.info("Load details updated", { loadId, userId: auth.userId });
+  } catch (err) {
+    log.error("Failed to update load", err as Error);
     return { error: "Failed to update load." };
   }
 
@@ -234,6 +243,8 @@ export async function advanceStatus(
       },
     });
 
+    log.info("Load status advanced", { loadId, newStatus, userId: auth.userId });
+
     // Auto-draft invoice when delivered
     if (newStatus === LoadStatus.DELIVERED) {
       const load = await prisma.load.findUnique({
@@ -245,7 +256,7 @@ export async function advanceStatus(
         const invoiceNumber = `INV-${String(count + 1).padStart(4, "0")}`;
         const dueAt = new Date();
         dueAt.setDate(dueAt.getDate() + 30);
-        await prisma.invoice.create({
+        const invoice = await prisma.invoice.create({
           data: {
             companyId: auth.companyId,
             invoiceNumber,
@@ -255,10 +266,12 @@ export async function advanceStatus(
             dueAt,
           },
         });
+        log.info("Invoice auto-drafted", { loadId, invoiceId: invoice.id, invoiceNumber });
         revalidatePath("/invoicing");
       }
     }
-  } catch {
+  } catch (err) {
+    log.error("Failed to advance status", err as Error);
     return { error: "Failed to update status." };
   }
 
@@ -314,7 +327,10 @@ export async function assignCarrier(
         },
       });
     }
-  } catch {
+
+    log.info("Carrier assigned to load", { loadId, carrierId, carrierRate, newStatus, userId: auth.userId });
+  } catch (err) {
+    log.error("Failed to assign carrier", err as Error);
     return { error: "Failed to assign carrier." };
   }
 
@@ -323,8 +339,11 @@ export async function assignCarrier(
   try {
     const { sendRateConfirmationEmail } = await import("@/lib/email/rate-confirmation");
     emailSent = await sendRateConfirmationEmail(loadId);
-  } catch {
-    // email failure is non-fatal
+    if (emailSent) {
+      log.info("Rate confirmation email sent", { loadId, carrierId });
+    }
+  } catch (err) {
+    log.warn("Rate confirmation email failed", { loadId, carrierId, error: (err as Error).message });
   }
 
   revalidatePath(`/loads/${loadId}`);
@@ -366,7 +385,9 @@ export async function addCheckCall(
         data: { currentLocation: location },
       }),
     ]);
-  } catch {
+    log.info("Check call added", { loadId, location, userId: auth.userId });
+  } catch (err) {
+    log.error("Failed to log check call", err as Error);
     return { error: "Failed to log check call." };
   }
 
@@ -398,7 +419,9 @@ export async function addNote(
         notes,
       },
     });
-  } catch {
+    log.info("Note added to load", { loadId, userId: auth.userId });
+  } catch (err) {
+    log.error("Failed to add note", err as Error);
     return { error: "Failed to add note." };
   }
 
@@ -457,7 +480,9 @@ export async function recordDocument(
         notes: `${type.replace(/_/g, " ")} uploaded`,
       },
     });
-  } catch {
+    log.info("Document recorded", { loadId, documentType: type, userId: auth.userId });
+  } catch (err) {
+    log.error("Failed to record document", err as Error);
     return { error: "Failed to record document." };
   }
 

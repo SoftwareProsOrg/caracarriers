@@ -1,6 +1,7 @@
 import { type NextRequest } from "next/server";
 import { createHmac } from "crypto";
 import { env } from "@/lib/env";
+import { prisma } from "@/lib/prisma";
 
 interface WebhookSigner {
   name: string;
@@ -87,8 +88,15 @@ export async function POST(request: NextRequest): Promise<Response> {
         status: s.signingStatus,
       })) ?? []
     );
-    // TODO: Update DB record once Prisma schema is set up
-    // e.g. await prisma.document.update({ where: { documensoId: document.id }, data: { signingStatus: 'COMPLETED' } })
+    try {
+      await prisma.document.updateMany({
+        where: { documensoId: document.id },
+        data: { signingStatus: "SIGNED" },
+      });
+      console.log(`[documenso webhook] DB updated: document ${document.id} signingStatus → SIGNED`);
+    } catch (err) {
+      console.error(`[documenso webhook] Failed to update DB for document ${document.id}:`, err);
+    }
   }
 
   if (event === "document.declined") {
@@ -96,7 +104,15 @@ export async function POST(request: NextRequest): Promise<Response> {
       `[documenso webhook] Document ${document.id} was declined.`,
       document.signers
     );
-    // TODO: Update DB record once Prisma schema is set up
+    try {
+      await prisma.document.updateMany({
+        where: { documensoId: document.id },
+        data: { signingStatus: "DECLINED" },
+      });
+      console.log(`[documenso webhook] DB updated: document ${document.id} signingStatus → DECLINED`);
+    } catch (err) {
+      console.error(`[documenso webhook] Failed to update DB for document ${document.id}:`, err);
+    }
   }
 
   return new Response("OK", { status: 200 });

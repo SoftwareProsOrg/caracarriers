@@ -6,6 +6,7 @@ import {
   Users, Globe, BarChart3, Zap,
 } from "lucide-react";
 import { WebMCPProvider } from "@/components/webmcp-provider";
+import { QuoteForm } from "@/components/quote-form";
 
 export const metadata: Metadata = {
   title: "CaraCarriers — Freight Brokerage | Nationwide Trucking Solutions",
@@ -207,19 +208,16 @@ export default function LandingPage() {
           </div>
         </header>
 
-        {/* ── Hero with Video Background ── */}
+        {/* ── Hero ── */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="absolute inset-0 h-full w-full object-cover"
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1920&q=80"
+              alt=""
               aria-hidden="true"
-            >
-              <source src="https://assets.mixkit.co/videos/preview/mixkit-trucks-driving-on-a-highway-at-sunset-4168-large.mp4" type="video/mp4" />
-            </video>
+              className="absolute inset-0 h-full w-full object-cover"
+            />
             <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/75 via-[#0f172a]/65 to-[#0f172a]" />
           </div>
 
@@ -380,140 +378,7 @@ export default function LandingPage() {
             </div>
 
             <div className="rounded-2xl border border-border bg-card p-8">
-             <form
-                 id="quote-form"
-                 className="space-y-5"
-               >
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium block mb-1.5" htmlFor="name">Your Name *</label>
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      required
-                      placeholder="John Smith"
-                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium block mb-1.5" htmlFor="company">Company</label>
-                    <input
-                      id="company"
-                      name="company"
-                      type="text"
-                      placeholder="Acme Corp"
-                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium block mb-1.5" htmlFor="email">Email *</label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      placeholder="you@company.com"
-                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium block mb-1.5" htmlFor="phone">Phone</label>
-                    <input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      placeholder="(555) 000-0000"
-                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium block mb-1.5" htmlFor="origin">Origin City, State *</label>
-                    <input
-                      id="origin"
-                      name="origin"
-                      type="text"
-                      required
-                      placeholder="Houston, TX"
-                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium block mb-1.5" htmlFor="destination">Destination City, State *</label>
-                    <input
-                      id="destination"
-                      name="destination"
-                      type="text"
-                      required
-                      placeholder="Atlanta, GA"
-                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className="text-sm font-medium block mb-1.5" htmlFor="equipment">Equipment Type</label>
-                    <select
-                      id="equipment"
-                      name="equipment"
-                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    >
-                      <option>Dry Van</option>
-                      <option>Flatbed</option>
-                      <option>Reefer</option>
-                      <option>Step Deck</option>
-                      <option>Box Truck</option>
-                      <option>Other</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium block mb-1.5" htmlFor="weight">Weight (lbs)</label>
-                    <input
-                      id="weight"
-                      name="weight"
-                      type="number"
-                      placeholder="42000"
-                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium block mb-1.5" htmlFor="pickup">Pickup Date</label>
-                    <input
-                      id="pickup"
-                      name="pickup"
-                      type="date"
-                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium block mb-1.5" htmlFor="notes">Commodity / Special Instructions</label>
-                  <textarea
-                    id="notes"
-                    name="notes"
-                    rows={3}
-                    placeholder="What are you shipping? Any special requirements?"
-                    className="flex min-h-[80px] w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  />
-                </div>
-
-             <button
-                   type="submit"
-                   className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-base font-semibold text-white hover:bg-primary/90 transition-colors"
-                   id="submit-button"
-                 >
-                   Submit Quote Request
-                   <ArrowRight className="h-5 w-5" />
-                 </button>
-              </form>
+             <QuoteForm />
 
               <div className="mt-8 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
@@ -619,65 +484,6 @@ export default function LandingPage() {
          </footer>
        </div>
        
-       {/* Form submission script */}
-       <script>
-         document.addEventListener('DOMContentLoaded', function() {
-           const form = document.getElementById('quote-form');
-           const submitButton = document.getElementById('submit-button');
-           
-           if (form && submitButton) {
-             form.addEventListener('submit', function(e) {
-               e.preventDefault();
-               
-               // Disable button and show loading state
-               submitButton.disabled = true;
-               submitButton.innerHTML = 'Sending... <ArrowRight className="h-5 w-5" />';
-               
-               // Collect form data
-               const formData = {
-                 name: document.getElementById('name')?.value || '',
-                 email: document.getElementById('email')?.value || '',
-                 phone: document.getElementById('phone')?.value || '',
-                 company: document.getElementById('company')?.value || '',
-                 origin: document.getElementById('origin')?.value || '',
-                 destination: document.getElementById('destination')?.value || '',
-                 equipment: document.getElementById('equipment')?.value || '',
-                 weight: document.getElementById('weight')?.value || '',
-                 pickup: document.getElementById('pickup')?.value || '',
-                 notes: document.getElementById('notes')?.value || ''
-               };
-               
-               // Send to API endpoint
-               fetch('/api/leads', {
-                 method: 'POST',
-                 headers: {
-                   'Content-Type': 'application/json',
-                 },
-                 body: JSON.stringify(formData)
-               })
-               .then(response => response.json())
-               .then(data => {
-                 if (data.success) {
-                   // Show success message
-                   alert('Thank you for your quote request! We will get back to you shortly.');
-                   form.reset();
-                 } else {
-                   throw new Error(data.error || 'Failed to submit');
-                 }
-               })
-               .catch(error => {
-                 console.error('Error:', error);
-                 alert('There was an error submitting your request. Please try again or call us directly.');
-               })
-               .finally(() => {
-                 // Re-enable button
-                 submitButton.disabled = false;
-                 submitButton.innerHTML = 'Submit Quote Request <ArrowRight className="h-5 w-5" />';
-               });
-             });
-           }
-         });
-       </script>
-     </>
+      </>
    );
 }

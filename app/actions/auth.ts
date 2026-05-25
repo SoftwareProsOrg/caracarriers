@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { log } from "@/lib/logger";
 
 const ALLOWED_DOMAIN = "caracarriers.com";
 
@@ -43,9 +44,12 @@ export async function login(prevState: AuthState, formData: FormData): Promise<A
     const supabase = await createClient();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
+      log.warn("Login failed", { email, error: error.message });
       return { error: "Invalid email or password. Please try again." };
     }
-  } catch {
+    log.info("User logged in", { email });
+  } catch (err) {
+    log.error("Login connection error", err as Error);
     return { error: "Unable to connect. Please try again shortly." };
   }
 
@@ -73,6 +77,7 @@ export async function signup(prevState: AuthState, formData: FormData): Promise<
   // Enforce domain restriction — only @caracarriers.com may register
   const domain = email.split("@")[1]?.toLowerCase();
   if (domain !== ALLOWED_DOMAIN) {
+    log.warn("Signup blocked: invalid domain", { email, domain });
     return {
       error: `Registration is restricted to @${ALLOWED_DOMAIN} addresses. Contact your administrator if you need access.`,
     };
@@ -91,6 +96,7 @@ export async function signup(prevState: AuthState, formData: FormData): Promise<
       },
     });
     if (error) {
+      log.error("Supabase signup error", { email, error: error.message });
       if (error.message.includes("already registered")) {
         return { error: "An account with this email already exists. Try signing in." };
       }
@@ -98,6 +104,7 @@ export async function signup(prevState: AuthState, formData: FormData): Promise<
     }
 
     if (data.user) {
+      log.info("Supabase user created, provisioning database record", { email, userId: data.user.id });
       const dbCompany = await prisma.company.create({
         data: { name: company },
       });
@@ -111,8 +118,10 @@ export async function signup(prevState: AuthState, formData: FormData): Promise<
           role: "ADMIN",
         },
       });
+      log.info("Signup complete", { email, company });
     }
-  } catch {
+  } catch (err) {
+    log.error("Signup processing error", err as Error);
     return { error: "Unable to connect. Please try again shortly." };
   }
 
@@ -124,8 +133,9 @@ export async function logout(): Promise<void> {
     const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
     await supabase.auth.signOut();
-  } catch {
-    // Proceed to redirect regardless
+    log.info("User logged out");
+  } catch (err) {
+    log.error("Logout error", err as Error);
   }
 
   redirect("/login");

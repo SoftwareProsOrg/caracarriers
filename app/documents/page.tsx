@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FileText, Upload, Download, PenLine } from "lucide-react";
 import { SendSignatureDialog } from "@/components/documents/send-signature-dialog";
+import { UploadDocumentDialog } from "@/components/documents/upload-document-dialog";
 import { prisma } from "@/lib/prisma";
 import { getAuthContext } from "@/lib/auth";
 
@@ -69,24 +70,34 @@ export default async function DocumentsPage() {
               <FileText className="h-4 w-4 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium">Upload & Send for Signature</p>
+              <p className="text-sm font-medium">Upload a Document</p>
               <p className="text-xs text-muted-foreground">
-                Upload a PDF and send it for e-signature via Documenso.
+                Upload PDFs, images, or documents. Use Documenso to send for e-signature.
               </p>
             </div>
-            <Button size="sm" variant="outline">
-              <Upload className="h-4 w-4" />
-              Upload PDF
-            </Button>
+            <UploadDocumentDialog
+              companyId={auth?.companyId ?? ""}
+              trigger={
+                <Button size="sm" variant="outline">
+                  <Upload className="h-4 w-4" />
+                  Upload PDF
+                </Button>
+              }
+            />
           </div>
         </div>
 
         <div className="mb-4 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">{documents.length} document{documents.length !== 1 ? "s" : ""}</p>
-          <Button size="sm">
-            <Upload className="h-4 w-4" />
-            Upload Document
-          </Button>
+          <UploadDocumentDialog
+            companyId={auth?.companyId ?? ""}
+            trigger={
+              <Button size="sm">
+                <Upload className="h-4 w-4" />
+                Upload Document
+              </Button>
+            }
+          />
         </div>
 
         {documents.length === 0 ? (
@@ -131,10 +142,15 @@ export default async function DocumentsPage() {
                         />
                       )}
                       {doc.status === "MISSING" ? (
-                        <Button size="sm" variant="outline">
-                          <Upload className="h-3.5 w-3.5" />
-                          Upload
-                        </Button>
+                        <UploadDocumentDialog
+                          companyId={auth?.companyId ?? ""}
+                          trigger={
+                            <Button size="sm" variant="outline">
+                              <Upload className="h-3.5 w-3.5" />
+                              Upload
+                            </Button>
+                          }
+                        />
                       ) : doc.fileUrl ? (
                         <Button size="sm" variant="ghost" asChild>
                           <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer">

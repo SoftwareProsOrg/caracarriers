@@ -1,13 +1,11 @@
 import { Header } from "@/components/layout/header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/prisma";
 import { getAuthContext } from "@/lib/auth";
 import { DemoDataControls } from "@/components/settings/demo-data-controls";
+import { CompanyProfileForm } from "@/components/settings/company-profile-form";
 
 export default async function SettingsPage() {
   const auth = await getAuthContext();
@@ -23,48 +21,18 @@ export default async function SettingsPage() {
     <>
       <Header title="Settings" subtitle="Company profile, users, and preferences" />
       <main className="flex-1 overflow-y-auto p-6 space-y-6 max-w-3xl">
-        {/* Company */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Company Profile</CardTitle>
-            <CardDescription>Your brokerage&apos;s information shown on documents</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Company Name</Label>
-                <Input defaultValue={company?.name ?? ""} readOnly />
-              </div>
-              <div className="space-y-2">
-                <Label>MC Number</Label>
-                <Input defaultValue={company?.mcNumber ?? ""} placeholder="MC-XXXXXX" readOnly />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>DOT Number</Label>
-                <Input defaultValue={company?.dotNumber ?? ""} placeholder="DOT-XXXXXXX" readOnly />
-              </div>
-              <div className="space-y-2">
-                <Label>Phone</Label>
-                <Input defaultValue={company?.phone ?? ""} placeholder="(555) 000-0000" readOnly />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Business Address</Label>
-              <Input
-                defaultValue={[company?.address, company?.city, company?.state, company?.zip].filter(Boolean).join(", ")}
-                placeholder="123 Freight Way, Houston, TX 77001"
-                readOnly
-              />
-            </div>
-            <p className="text-xs text-muted-foreground">Company profile editing coming soon.</p>
-          </CardContent>
-        </Card>
+        {company ? (
+          <CompanyProfileForm company={company} />
+        ) : (
+          <Card>
+            <CardContent className="p-6 text-sm text-muted-foreground">
+              Sign in to manage company settings.
+            </CardContent>
+          </Card>
+        )}
 
         <Separator />
 
-        {/* Team */}
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Team Members</CardTitle>
@@ -94,7 +62,6 @@ export default async function SettingsPage() {
 
         <Separator />
 
-        {/* Demo Data */}
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Demo Data</CardTitle>
@@ -110,7 +77,6 @@ export default async function SettingsPage() {
 
         <Separator />
 
-        {/* About */}
         <Card>
           <CardHeader>
             <CardTitle className="text-base">About This Platform</CardTitle>

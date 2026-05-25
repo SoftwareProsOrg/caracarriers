@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
@@ -9,6 +11,15 @@ interface HeaderProps {
 }
 
 export function Header({ title, subtitle }: HeaderProps) {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter" && query.trim()) {
+      router.push(`/loads?search=${encodeURIComponent(query.trim())}`);
+    }
+  }
+
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-card px-6">
       <div>
@@ -22,6 +33,9 @@ export function Header({ title, subtitle }: HeaderProps) {
           <Input
             placeholder="Search loads, carriers, shippers..."
             className="w-72 pl-9 h-8 text-sm"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
         </div>
       </div>
